@@ -1,0 +1,8 @@
+name: seguridad-monitoreo
+channels:
+  - defaults
+dependencies:
+  - python=3.9
+  - pip
+  - pip:
+      - pip-tools
