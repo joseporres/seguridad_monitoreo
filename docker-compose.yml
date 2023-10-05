@@ -1,0 +1,38 @@
+version: '3'
+services:
+  app:
+    build:
+      context: ./poke_stats
+      dockerfile: Dockerfile
+    image: poke_stats
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./poke_stats:/app
+    networks:
+      - seguridad-monitoreo_network
+    env_file:
+      - ./poke_stats/.env
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:4.4.6
+    container_name: mongodb-seguridad-monitoreo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: seguridad-monitoreo
+    volumes:
+      - mongodb-seguridad-monitoreo-data:/data/db
+    networks:
+      - seguridad-monitoreo_network
+    ports:
+      - 27017:27017
+
+volumes:
+  mongodb-seguridad-monitoreo-data:
+    driver: local
+
+networks:
+  seguridad-monitoreo_network:
+    driver: bridge
