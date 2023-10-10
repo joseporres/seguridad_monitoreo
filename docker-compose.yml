@@ -1,6 +1,7 @@
 version: '3'
 services:
   api_gateway:
+    hostname: api_gateway
     image: nginx_gateway_image:latest
     build: 
       context: ./nginx/
@@ -63,6 +64,23 @@ services:
       - seguridad-monitoreo_network
     env_file:
       - ./poke_images/.env
+    depends_on:
+      - mongodb
+  search_api:
+    hostname: search_api
+    container_name: search_api
+    ports:
+      - 5000:5000
+    build:
+      context: ./search_api
+      dockerfile: Dockerfile
+    image: search_api
+    volumes:
+      - ./search_api:/app
+    networks:
+      - seguridad-monitoreo_network
+    env_file:
+      - ./search_api/.env
     depends_on:
       - mongodb
   mongodb:
