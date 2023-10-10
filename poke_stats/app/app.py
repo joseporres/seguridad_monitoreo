@@ -12,6 +12,8 @@ from app.constants.values import LOG_API_PATHS
 
 app = FastAPI(
     title=api_settings.TITLE,
+    openapi_url=f'{api_settings.PREFIX}/openapi.json',
+    docs_url=f'{api_settings.PREFIX}/docs',
 )
 
 app.add_middleware(
@@ -22,12 +24,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.router.prefix = api_settings.PREFIX
 
 @app.middleware("http")
 async def log_request(request: Request, call_next):
 
     path = request.url.path
-    log_request = any(path.startswith(api_path) for api_path in LOG_API_PATHS)
+    log_request = any(api_path in path for api_path in LOG_API_PATHS)
     if not log_request:
         return await call_next(request)
 

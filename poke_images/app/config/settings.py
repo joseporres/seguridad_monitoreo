@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     MONGO_LOG_COLLECION: str
     MONGO_POKEMON_COLLECTION: str
     TITLE: str
+    PREFIX: str
 
 
 

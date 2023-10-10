@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     MONGO_POKEMON_COLLECTION: str
     TITLE: str
     POKE_API_URL: str
+    PREFIX: str
 
 
 

@@ -1,1 +1,1 @@
-LOG_API_PATHS = ['/search']
+LOG_API_PATHS = ['/search/']

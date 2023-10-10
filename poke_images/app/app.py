@@ -1,10 +1,9 @@
-from fastapi import FastAPI,Request
-from fastapi.routing import APIRoute
+from fastapi import FastAPI, Request
 from starlette.middleware.cors import CORSMiddleware
 from app.config.settings import api_settings
 import uvicorn
 from fastapi.exceptions import HTTPException
-from app.config.mongo import pokemons, logs
+from app.config.mongo import logs
 from fastapi.responses import JSONResponse
 from datetime import datetime
 from app.constants.values import LOG_API_PATHS
@@ -14,8 +13,9 @@ import base64
 
 app = FastAPI(
     title=api_settings.TITLE,
+    openapi_url=f'{api_settings.PREFIX}/openapi.json',
+    docs_url=f'{api_settings.PREFIX}/docs',
 )
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -24,20 +24,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.router.prefix = api_settings.PREFIX
+
 
 @app.middleware("http")
 async def log_request(request: Request, call_next):
 
     path = request.url.path
-    log_request = any(path.startswith(api_path) for api_path in LOG_API_PATHS)
+    # log_request = any(path.startswith(api_path) for api_path in LOG_API_PATHS)
+    # include
+    log_request = any(api_path in path for api_path in LOG_API_PATHS)
     if not log_request:
         return await call_next(request)
 
     start_time = datetime.now()
-    
+
     # Antes de manejar la solicitud
     response = await call_next(request)
-    
+
     end_time = datetime.now()
     execution_time = (end_time - start_time).total_seconds()
 
@@ -59,9 +63,10 @@ async def log_request(request: Request, call_next):
 def root():
     return {"message": f"Welcome to {api_settings.TITLE}"}
 
+
 @app.get("/search/{name}")
-# @log_request() 
-def root(name : str):
+# @log_request()
+def root(name: str):
     try:
         name = name.capitalize()
         images_directory = "app/images"
@@ -76,20 +81,18 @@ def root(name : str):
         for filename in os.listdir(folder_path):
             if filename.endswith((".jpg", ".png")):  # Filtra solo archivos de imagen
                 with open(os.path.join(folder_path, filename), "rb") as image_file:
-                    image_data = base64.b64encode(image_file.read()).decode("utf-8")
+                    image_data = base64.b64encode(
+                        image_file.read()).decode("utf-8")
                     image_list.append({
                         "name": filename,
                         "data": image_data
                     })
-        
+
         return JSONResponse(content=image_list, status_code=200)
 
-           
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
-
-
 
 
 def run():

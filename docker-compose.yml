@@ -1,18 +1,68 @@
 version: '3'
 services:
-  app:
+  api_gateway:
+    image: nginx_gateway_image:latest
+    build: 
+      context: ./nginx/
+      dockerfile: Dockerfile
+    container_name: api_gateway
+    ports:
+      - protocol: tcp
+        target: 80
+        published: 8881
+    environment:
+      NGINX_PORT: 80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - seguridad-monitoreo_network
+    depends_on:
+      - poke_stats
+      - poke_api
+      - poke_images
+  poke_stats:
+    hostname: poke_stats
+    container_name: poke_stats
     build:
       context: ./poke_stats
       dockerfile: Dockerfile
     image: poke_stats
-    ports:
-      - "5000:5000"
     volumes:
       - ./poke_stats:/app
     networks:
       - seguridad-monitoreo_network
     env_file:
       - ./poke_stats/.env
+    depends_on:
+      - mongodb
+  poke_api:
+    hostname: poke_api
+    container_name: poke_api
+    build:
+      context: ./poke_api
+      dockerfile: Dockerfile
+    image: poke_api
+    volumes:
+      - ./poke_api:/app
+    networks:
+      - seguridad-monitoreo_network
+    env_file:
+      - ./poke_api/.env
+    depends_on:
+      - mongodb
+  poke_images:
+    hostname: poke_images
+    container_name: poke_images
+    build:
+      context: ./poke_images
+      dockerfile: Dockerfile
+    image: poke_images
+    volumes:
+      - ./poke_images:/app
+    networks:
+      - seguridad-monitoreo_network
+    env_file:
+      - ./poke_images/.env
     depends_on:
       - mongodb
   mongodb:
