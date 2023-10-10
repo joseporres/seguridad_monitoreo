@@ -17,7 +17,7 @@ def run():
         for each in reader:
             row = {}
             for field in reader.fieldnames:
-                row[field] = each[field]
+                row[field] = each[field].lower()
             pokemons.insert_one(row)
     else:
         print("Pokemons collection already contains data. Skipping seeding.")

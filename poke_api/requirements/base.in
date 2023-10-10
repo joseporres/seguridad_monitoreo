@@ -1,0 +1,6 @@
+fastapi
+uvicorn[standard]
+pymongo
+ipykernel
+pydantic_settings
+requests

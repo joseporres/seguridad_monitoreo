@@ -1,4 +1,4 @@
-name: poke_stats
+name: poke_images
 channels:
   - defaults
 dependencies:

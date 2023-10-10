@@ -1,0 +1,1 @@
+LOG_API_PATHS = ['/search']

@@ -8,6 +8,7 @@ from app.config.mongo import pokemons, logs
 from fastapi.responses import JSONResponse
 from datetime import datetime
 from app.constants.values import LOG_API_PATHS
+import requests
 # import time
 
 app = FastAPI(
@@ -62,13 +63,21 @@ def root():
 def root(name : str):
     try:
         name = name.lower()
-        foundPokemon = pokemons.find_one({"Name": name})
-        if foundPokemon:
-           foundPokemon['_id'] = str(foundPokemon['_id'])
-           return JSONResponse(content=foundPokemon, status_code=200)
+        poke_api_url = f'{api_settings.POKE_API_URL}{name}/'
+        response = requests.get(poke_api_url)
+
+        if response.status_code == 200:
+            data = response.json()
+            pokemon_info = {
+                'Name': data['name'],
+                'Abilities': [ability['ability']['name'] for ability in data['abilities']],
+                'Types': [type['type']['name'] for type in data['types']],
+                # Add more attributes as needed
+            }
+            return JSONResponse(content=pokemon_info, status_code=200)
         else:
             raise HTTPException(status_code=404, detail="Pokemon not found")
-        
+           
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
