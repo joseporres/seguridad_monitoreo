@@ -83,6 +83,9 @@ services:
       - ./search_api/.env
     depends_on:
       - mongodb
+      - poke_stats
+      - poke_api
+      - poke_images
   mongodb:
     image: mongo:4.4.6
     container_name: mongodb-seguridad-monitoreo
