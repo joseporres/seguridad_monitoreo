@@ -5,5 +5,5 @@ docker-compose up -d --build
 ```
 
 ```
-make seed
+make retore
 ```
