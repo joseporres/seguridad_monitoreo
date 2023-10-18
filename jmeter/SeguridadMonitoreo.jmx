@@ -79,7 +79,7 @@
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">/home/jorge/Documentos/utec/ciclo10/seguridad_monitoreo/jmeter/test2.csv</stringProp>
+          <stringProp name="filename">/home/jorge/Documentos/utec/ciclo10/seguridad_monitoreo/jmeter/test3.csv</stringProp>
         </ResultCollector>
         <hashTree/>
       </hashTree>
